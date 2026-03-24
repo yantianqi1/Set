@@ -30,7 +30,9 @@ ENV API_PROXY_TARGET=$API_PROXY_TARGET
 
 COPY . .
 
-RUN pnpm build
+RUN pnpm build \
+  && mkdir -p /app/apps/web/.next/standalone/apps/web/.next \
+  && cp -R /app/apps/web/.next/static /app/apps/web/.next/standalone/apps/web/.next/static
 
 FROM builder AS api-runner
 
