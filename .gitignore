@@ -5,6 +5,5 @@ coverage
 .env
 .env.local
 .turbo
-pnpm-lock.yaml
 *.log
 prisma/dev.db
