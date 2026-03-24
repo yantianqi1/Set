@@ -2,6 +2,28 @@
 
 轻量级套图生成工作台。输入主题、角色设定与风格约束后，系统会自动完成套图规划、提示词生成、批量出图与任务追踪。
 
+<p align="left">
+  <a href="https://pollinations.ai" target="_blank" rel="noopener noreferrer">
+    <picture>
+      <source
+        media="(prefers-color-scheme: dark)"
+        srcset="https://raw.githubusercontent.com/pollinations/pollinations/master/assets/logo-text-white.svg"
+      />
+      <img
+        src="https://raw.githubusercontent.com/pollinations/pollinations/master/assets/logo-text-black.svg"
+        alt="pollinations.ai"
+        width="260"
+      />
+    </picture>
+  </a>
+</p>
+
+[![Built With pollinations.ai](https://img.shields.io/badge/Built%20With-pollinations.ai-35D89A?style=for-the-badge)](https://pollinations.ai)
+
+## 鸣谢
+
+感谢 [pollinations.ai](https://pollinations.ai) 为本项目提供文本规划、提示词生成与图片生成能力支持。
+
 ## 项目特性
 
 - 批量套图生成：支持主题、角色画像、风格预设、画幅比例、连贯度、服装变化策略等配置。
