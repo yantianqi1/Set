@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ImageSetJob {
+  id                                String                @id @default(cuid())
+  ownerTokenHash                    String                @map("owner_token_hash")
+  status                            String
+  packInputJson                     String                @map("pack_input_json")
+  totalImages                       Int                   @default(0) @map("total_images")
+  successImages                     Int                   @default(0) @map("success_images")
+  failedImages                      Int                   @default(0) @map("failed_images")
+  resolvedPollinationsConfigEncrypted String             @map("resolved_pollinations_config_encrypted")
+  createdAt                         DateTime              @default(now()) @map("created_at")
+  updatedAt                         DateTime              @updatedAt @map("updated_at")
+  startedAt                         DateTime?             @map("started_at")
+  finishedAt                        DateTime?             @map("finished_at")
+  failedReason                      String?               @map("failed_reason")
+  planItems                         ImageSetPlanItem[]
+  prompts                           ImageSetPrompt[]
+  images                            ImageSetResultImage[]
+  events                            ImageSetEvent[]
+
+  @@index([ownerTokenHash, createdAt])
+  @@map("image_set_jobs")
+}
+
+model ImageSetPlanItem {
+  id                String      @id
+  jobId             String      @map("job_id")
+  imageIndex        Int         @map("image_index")
+  title             String
+  purpose           String
+  shotType          String      @map("shot_type")
+  cameraAngle       String      @map("camera_angle")
+  pose              String
+  expression        String
+  outfitVariant     String      @map("outfit_variant")
+  background        String
+  lighting          String
+  compositionFocus  String      @map("composition_focus")
+  consistencyAnchor String      @map("consistency_anchor")
+  variationPoint    String      @map("variation_point")
+  detailedIntent    String      @map("detailed_intent")
+  job               ImageSetJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, imageIndex])
+  @@map("image_set_plan_items")
+}
+
+model ImageSetPrompt {
+  id           String      @id
+  jobId        String      @map("job_id")
+  imageIndex   Int         @map("image_index")
+  promptStatus String      @map("prompt_status")
+  finalPrompt  String?     @map("final_prompt")
+  shortCaption String?     @map("short_caption")
+  job          ImageSetJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, imageIndex])
+  @@map("image_set_prompts")
+}
+
+model ImageSetResultImage {
+  id            String      @id
+  jobId         String      @map("job_id")
+  imageIndex    Int         @map("image_index")
+  imageStatus   String      @map("image_status")
+  imageUrl      String?     @map("image_url")
+  errorMessage  String?     @map("error_message")
+  provider      String?
+  providerModel String?     @map("provider_model")
+  job           ImageSetJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, imageIndex])
+  @@map("image_set_result_images")
+}
+
+model ImageSetEvent {
+  id        String      @id
+  jobId     String      @map("job_id")
+  stage     String
+  level     String
+  message   String
+  createdAt DateTime    @default(now()) @map("created_at")
+  job       ImageSetJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId, createdAt])
+  @@map("image_set_events")
+}

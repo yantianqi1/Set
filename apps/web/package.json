@@ -1,0 +1,28 @@
+{
+  "name": "@image-set-studio/web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@image-set-studio/shared": "workspace:*",
+    "next": "16.1.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@types/node": "^22.13.14",
+    "eslint": "^9.4.0",
+    "eslint-config-next": "16.1.6",
+    "jsdom": "^27.0.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.2.4",
+    "@vitejs/plugin-react": "^5.1.0"
+  }
+}

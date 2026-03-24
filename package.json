@@ -1,0 +1,19 @@
+{
+  "name": "image-set-studio",
+  "private": true,
+  "packageManager": "pnpm@10.8.1",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm --parallel --filter @image-set-studio/api --filter @image-set-studio/web dev",
+    "prisma:generate": "pnpm --filter @image-set-studio/api prisma:generate",
+    "prisma:migrate": "pnpm --filter @image-set-studio/api prisma:migrate",
+    "test": "pnpm -r test"
+  },
+  "devDependencies": {
+    "@prisma/client": "6.19.2",
+    "prisma": "6.19.2",
+    "typescript": "^5.8.2",
+    "vitest": "^3.2.4"
+  }
+}

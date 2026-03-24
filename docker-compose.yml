@@ -1,0 +1,72 @@
+services:
+  postgres:
+    image: postgres:16-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-image_set_studio}
+      POSTGRES_USER: ${POSTGRES_USER:-image_set_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api-runner
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-image_set_user}:${POSTGRES_PASSWORD:-change-me}@postgres:5432/${POSTGRES_DB:-image_set_studio}?schema=public
+      CONFIG_ENCRYPTION_KEY: ${CONFIG_ENCRYPTION_KEY}
+      POLLINATIONS_DEFAULT_PLANNING_MODEL: ${POLLINATIONS_DEFAULT_PLANNING_MODEL:-openai}
+      POLLINATIONS_DEFAULT_PROMPT_MODEL: ${POLLINATIONS_DEFAULT_PROMPT_MODEL:-openai-fast}
+      POLLINATIONS_DEFAULT_IMAGE_MODEL: ${POLLINATIONS_DEFAULT_IMAGE_MODEL:-flux}
+      SCHEDULER_POLL_MS: ${SCHEDULER_POLL_MS:-2000}
+      PROMPT_GENERATION_CONCURRENCY: ${PROMPT_GENERATION_CONCURRENCY:-2}
+      IMAGE_GENERATION_CONCURRENCY: ${IMAGE_GENERATION_CONCURRENCY:-2}
+    expose:
+      - "4000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4000/health').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: web-runner
+      args:
+        API_PROXY_TARGET: http://api:4000
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+
+volumes:
+  postgres_data:

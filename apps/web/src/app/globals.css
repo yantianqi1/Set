@@ -1,0 +1,242 @@
+:root {
+  --paper: #fdfaf3;
+  --ink: #2d3436;
+  --ink-light: #636e72;
+  --grid-line: #e8e4d9;
+  --accent: #ff7675;
+  --sticky-yellow: #fff9c4;
+  --sticky-blue: #e1f5fe;
+  --sticky-green: #f1f8e9;
+  --sticky-purple: #f3e5f5;
+  --radius-sketch: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  --shadow-sketch: 5px 5px 0px var(--ink);
+  --shadow-hover: 8px 8px 0px var(--ink);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  background-image: 
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 25px 25px;
+  color: var(--ink);
+  font-family: "Kaiti", "STKaiti", "Hiragino Sans", "Yu Gothic", "Comic Sans MS", cursive, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 2px solid var(--ink);
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.app-nav {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sketch);
+}
+
+.nav-link:hover, .nav-link.active {
+  border-color: var(--ink);
+  background: var(--sticky-yellow);
+  transform: rotate(-2deg);
+}
+
+.locale-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.locale-switcher select {
+  min-width: 7.5rem;
+  background: white;
+}
+
+.page-shell {
+  padding: 3rem 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* 手绘感卡片 */
+.panel {
+  background: white;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sketch);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-sketch);
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.sticky-note {
+  background: var(--sticky-yellow);
+  padding: 1.5rem;
+  border: 2px solid var(--ink);
+  border-radius: 2px;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+  transform: rotate(1deg);
+}
+
+h1 {
+  font-size: 2.2rem;
+  margin: 0 0 1rem 0;
+  display: inline-block;
+  position: relative;
+}
+
+h1::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--accent);
+  opacity: 0.3;
+  border-radius: 50%;
+}
+
+p.subtitle {
+  color: var(--ink-light);
+  font-style: italic;
+  margin-bottom: 2.5rem;
+}
+
+/* 表单手绘化 */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+label {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+input, select, textarea {
+  background: transparent;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sketch);
+  padding: 0.8rem;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  background: rgba(255, 249, 196, 0.3);
+  transform: scale(1.01);
+}
+
+.button {
+  background: var(--ink);
+  color: white;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sketch);
+  padding: 1rem 2rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+  transition: all 0.2s;
+}
+
+.button:hover {
+  transform: translate(-2px, -2px) rotate(1deg);
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.2);
+  background: var(--accent);
+}
+
+.button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0 rgba(0,0,0,0.2);
+}
+
+.button-secondary {
+  background: white;
+  color: var(--ink);
+}
+
+.message {
+  border: 2px dashed var(--ink);
+  padding: 1rem;
+  border-radius: var(--radius-sketch);
+  background: var(--sticky-green);
+  margin-top: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.checkbox-group {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.checkbox-group input {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 720px) {
+  .app-header {
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .page-shell {
+    padding: 2rem 1rem;
+  }
+}
