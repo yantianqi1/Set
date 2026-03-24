@@ -1,7 +1,10 @@
+name: ${COMPOSE_PROJECT_NAME:-image-set-studio}
+
 services:
   postgres:
     image: postgres:16-bookworm
     restart: unless-stopped
+    init: true
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-image_set_studio}
       POSTGRES_USER: ${POSTGRES_USER:-image_set_user}
@@ -14,13 +17,17 @@ services:
       timeout: 5s
       retries: 12
       start_period: 10s
+    networks:
+      - app_network
 
   api:
+    image: ${COMPOSE_PROJECT_NAME:-image-set-studio}-api:local
     build:
       context: .
       dockerfile: Dockerfile
       target: api-runner
     restart: unless-stopped
+    init: true
     depends_on:
       postgres:
         condition: service_healthy
@@ -28,7 +35,7 @@ services:
       NODE_ENV: production
       PORT: 4000
       DATABASE_URL: postgresql://${POSTGRES_USER:-image_set_user}:${POSTGRES_PASSWORD:-change-me}@postgres:5432/${POSTGRES_DB:-image_set_studio}?schema=public
-      CONFIG_ENCRYPTION_KEY: ${CONFIG_ENCRYPTION_KEY}
+      CONFIG_ENCRYPTION_KEY: ${CONFIG_ENCRYPTION_KEY:?CONFIG_ENCRYPTION_KEY is required}
       POLLINATIONS_DEFAULT_PLANNING_MODEL: ${POLLINATIONS_DEFAULT_PLANNING_MODEL:-openai}
       POLLINATIONS_DEFAULT_PROMPT_MODEL: ${POLLINATIONS_DEFAULT_PROMPT_MODEL:-openai-fast}
       POLLINATIONS_DEFAULT_IMAGE_MODEL: ${POLLINATIONS_DEFAULT_IMAGE_MODEL:-flux}
@@ -43,8 +50,11 @@ services:
       timeout: 5s
       retries: 12
       start_period: 15s
+    networks:
+      - app_network
 
   web:
+    image: ${COMPOSE_PROJECT_NAME:-image-set-studio}-web:local
     build:
       context: .
       dockerfile: Dockerfile
@@ -52,6 +62,7 @@ services:
       args:
         API_PROXY_TARGET: http://api:4000
     restart: unless-stopped
+    init: true
     depends_on:
       api:
         condition: service_healthy
@@ -59,14 +70,20 @@ services:
       NODE_ENV: production
       HOSTNAME: 0.0.0.0
       PORT: 3000
+      NEXT_TELEMETRY_DISABLED: 1
     ports:
-      - "${WEB_PORT:-3000}:3000"
+      - "${WEB_BIND_HOST:-0.0.0.0}:${WEB_PORT:-3000}:3000"
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"]
       interval: 10s
       timeout: 5s
       retries: 12
       start_period: 15s
+    networks:
+      - app_network
+
+networks:
+  app_network:
 
 volumes:
   postgres_data:
